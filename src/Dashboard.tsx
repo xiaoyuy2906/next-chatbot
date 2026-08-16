@@ -2,6 +2,9 @@ import viteLogo from "./assets/sp500.jpeg"
 import { Outlet } from "react-router"
 import { PlusCircleFilled, SettingFilled, DownloadOutlined } from '@ant-design/icons'
 import ChatTab from "./ChatTab"
+import { conversations } from "./store.tsx"
+import type { Chat } from "./types.ts"
+import { Suspense } from "react"
 
 function Dashboard() {
   return (
@@ -17,21 +20,16 @@ function Dashboard() {
           </div>
         </div>
         <div className="flex flex-col  space-y-2 h-full overflow-auto">
-          <ChatTab />
-          <ChatTab />
-          <ChatTab />
-          <ChatTab />
-          <ChatTab />
-          <ChatTab />
-          <ChatTab />
-          <ChatTab />
-          <ChatTab />
-          <ChatTab />
-          <ChatTab />
-          <ChatTab />
-          <ChatTab />
-          <ChatTab />
-          <ChatTab />
+          {
+            conversations.chats.sort((a: Chat, b: Chat) => new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime()).map((chat: Chat) => {
+              return (
+                <div key={chat.chatId}>
+                  <ChatTab chatId={chat.chatId} />
+                </div>
+              )
+            })
+          }
+
         </div>
 
         <div className="flex  justify-between text-xs">
@@ -47,7 +45,12 @@ function Dashboard() {
         </div>
       </div>
 
-      <div className="basis-2/3">New Conversation</div>
+      <div className="basis-2/3">
+        <Suspense fallback={'...loading'}>
+          <Outlet />
+        </Suspense>
+
+      </div>
     </div>
   )
 }
