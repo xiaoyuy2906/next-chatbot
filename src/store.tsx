@@ -119,7 +119,7 @@ Would you like to dive deeper into any specific aspect, such as the Transformer 
     makeAutoObservable(this)
   }
 
-  createNewChat(modelName: string = 'deepseek/deepseek-v4-flash') {
+  createNewChat(modelName: string = 'deepseek-v4-flash') {
     const chatItem = {
       chatId: Math.random().toString(36).slice(2),
       model: modelName,
@@ -128,6 +128,10 @@ Would you like to dive deeper into any specific aspect, such as the Transformer 
       messages: [],
     }
     this.chats.push(chatItem)
+    return {
+      modelName: chatItem.model,
+      chatId: chatItem.chatId
+    }
   }
 
   addMessage(chatId: string, ...msgs: Message[]) {

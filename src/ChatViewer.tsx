@@ -1,9 +1,10 @@
-import { useParams } from "react-router"
+import { useNavigate, useParams } from "react-router"
 import { conversations } from "./store.tsx"
 import { CheckCircleFilled, EditFilled, ReloadOutlined, SendOutlined } from '@ant-design/icons'
-import { useCallback, useEffect, useRef, useState, type TextareaHTMLAttributes } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import type { Message } from "./types.ts"
 import { observer } from "mobx-react"
+import { Button, Empty } from 'antd'
 
 function useInput(init: string = '') {
   const [value, setValue] = useState(init)
@@ -17,14 +18,18 @@ function useInput(init: string = '') {
   return { value, onChange, clearInput }
 }
 
+const EmptyComp: React.FC = () => (
+  <Empty
+    description={false}>
+    <Button type="primary">Create New Chat Now</Button>
+  </Empty>
+)
 
-
-function ChatViewer() {
+function ChatContentComponent({ idx }: { idx: number }) {
   const params = useParams()
-  const idx = conversations.chats.findIndex(chat => chat.chatId == params.chatId)
   const currentChat = conversations.chats[idx]
   const textInput = useInput('')
-  const displayArea = useRef<HTMLTextAreaElement | null>(null)
+  const displayArea = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     if (displayArea.current) {
@@ -41,6 +46,16 @@ function ChatViewer() {
     conversations.addMessage(params.chatId!, userMsg)
     conversations.getResponse(params.chatId!)
     textInput.clearInput()
+  }
+
+  async function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key == 'Enter') {
+      if (e.shiftKey) {
+        e.preventDefault()
+      } else {
+        await getMessage()
+      }
+    }
   }
 
   return (
@@ -85,7 +100,8 @@ function ChatViewer() {
       <div className="px-5 pt-2  pb-5 border-t relative">
         <textarea className="w-full py-2 pl-2 outline-none pr-[90px] resize-none border rounded-xl"
           value={textInput.value}
-          onChange={textInput.onChange} />
+          onChange={textInput.onChange}
+          onKeyUp={handleKeyDown} />
         <button className="absolute right-12 top-6 rounded z-10 text-blue-600 border p-1 text-xl h-fit"
           onClick={getMessage}>
           <div className="flex items-center justify-center">
@@ -95,6 +111,30 @@ function ChatViewer() {
       </div>
     </div>
   )
+}
+
+const ChatContent = observer(ChatContentComponent)
+
+function ChatViewer() {
+  const params = useParams()
+  const idx = conversations.chats.findIndex(chat => chat.chatId == params.chatId)
+  const navigate = useNavigate()
+  const createNewChat = useCallback(() => {
+    const { modelName, chatId } = conversations.createNewChat()
+    navigate(`/models/${modelName}/chats/${chatId}`)
+  }, [])
+
+
+
+  if (idx == -1) {
+    return (
+      <div className="flex flex-col h-full justify-center grow" onClick={createNewChat}>
+        <EmptyComp />
+      </div>
+    )
+  }
+
+  return <ChatContent idx={idx} />
 }
 
 export default observer(ChatViewer)

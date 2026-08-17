@@ -1,12 +1,23 @@
 import viteLogo from "./assets/sp500.jpeg"
-import { Outlet } from "react-router"
+import { Outlet, useNavigate } from "react-router"
 import { PlusCircleFilled, SettingFilled, DownloadOutlined } from '@ant-design/icons'
 import ChatTab from "./ChatTab"
 import { conversations } from "./store.tsx"
 import type { Chat } from "./types.ts"
-import { Suspense } from "react"
+import { Suspense, useCallback } from "react"
+import { observer } from "mobx-react"
+
 
 function Dashboard() {
+
+  const navigate = useNavigate()
+  const createNewChat = useCallback(() => {
+    const { modelName, chatId } = conversations.createNewChat()
+    navigate(`/models/${modelName}/chats/${chatId}`)
+  }, [])
+
+
+
   return (
     <div className="flex h-full">
       <div className="flex flex-col basis-1/3 p-5 bg-slate-700 gap-4">
@@ -21,7 +32,7 @@ function Dashboard() {
         </div>
         <div className="flex flex-col  space-y-2 h-full overflow-auto">
           {
-            conversations.chats.sort((a: Chat, b: Chat) => new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime()).map((chat: Chat) => {
+            conversations.chats.slice().sort((a: Chat, b: Chat) => new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime()).map((chat: Chat) => {
               return (
                 <div key={chat.chatId}>
                   <ChatTab chatId={chat.chatId} />
@@ -39,7 +50,7 @@ function Dashboard() {
           <div className="bg-zinc-800 p-2 rounded-xl">
             <DownloadOutlined />
           </div>
-          <div className="bg-zinc-800 p-2 rounded-xl">
+          <div className="bg-zinc-800 p-2 rounded-xl hover:cursor-pointer" onClick={createNewChat}>
             <PlusCircleFilled /> new chat
           </div>
         </div>
@@ -55,4 +66,4 @@ function Dashboard() {
   )
 }
 
-export default Dashboard
+export default observer(Dashboard)
