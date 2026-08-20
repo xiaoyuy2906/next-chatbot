@@ -1,5 +1,5 @@
 import viteLogo from "./assets/sp500.jpeg"
-import { Outlet, useNavigate } from "react-router"
+import { NavLink, Outlet, useNavigate } from "react-router"
 import { PlusCircleFilled, SettingFilled, DownloadOutlined } from '@ant-design/icons'
 import ChatTab from "./ChatTab"
 import { conversations } from "./store.tsx"
@@ -15,7 +15,6 @@ function Dashboard() {
     const { modelName, chatId } = conversations.createNewChat()
     navigate(`/models/${modelName}/chats/${chatId}`)
   }, [])
-
 
 
   return (
@@ -44,9 +43,13 @@ function Dashboard() {
         </div>
 
         <div className="flex  justify-between text-xs">
-          <div className="bg-zinc-800 p-2 rounded-xl">
-            <SettingFilled />
-          </div>
+
+          <NavLink to='/settings'>
+            <div className="bg-zinc-800 p-2 rounded-xl">
+              <SettingFilled />
+            </div>
+          </NavLink>
+
           <div className="bg-zinc-800 p-2 rounded-xl">
             <DownloadOutlined />
           </div>

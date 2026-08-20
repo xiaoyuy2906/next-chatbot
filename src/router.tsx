@@ -1,7 +1,9 @@
-import React from "react"
+import React, { lazy } from "react"
 import { createHashRouter } from "react-router"
 import Dashboard from "./Dashboard"
 import { Button, Empty } from 'antd'
+
+const Settings = lazy(() => import("./Settings.tsx"))
 
 const EmptyComp: React.FC = () => (
   <div className="flex flex-col justify-center h-full grow">
@@ -28,6 +30,10 @@ const router = createHashRouter([
         path: "models/:modelName/chats/:chatId",
         element: <ChatViewer />,
       },
+      {
+        path: 'settings',
+        element: <Settings />
+      }
     ]
   },
 ])

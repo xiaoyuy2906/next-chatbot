@@ -1,6 +1,7 @@
-import { makeAutoObservable } from "mobx"
+import { makeAutoObservable, autorun } from "mobx"
 import { type Chat, type Message } from "./types.ts"
 import axios from "axios"
+import { defaultTheme } from "antd/es/theme/context"
 
 
 
@@ -8,9 +9,9 @@ class ConversationHistory {
   chats: Chat[] = [
     {
       chatId: '3phyqunbcci',
-      model: "deepseek-v4-flash-0731",
+      model: "deepseek-v4-flash",
       lastModified: '2026-08-12T20:16:01.733Z',
-      title: 'New Conversation',
+      title: '',
       messages: [
         {
           role: "user",
@@ -109,15 +110,43 @@ Would you like to dive deeper into any specific aspect, such as the Transformer 
       chatId: 'q7wvn0d5tak',
       model: "claude-sonnet-5",
       lastModified: '2026-08-14T08:20:00.000Z',
-      title: '新对话',
+      title: '',
       messages: []
     }
   ]
 
+  config = {
+    apiBase: 'https://ai-gateway.vercel.sh',
+    defaultModel: 'deepseek-v4-flash',
+    apiKey: '',
+    temperature: 2,
+    topP: 1,
+    frequencyPenalty: 2,
+    maxCompletionTokens: 96000,
+    reasoningEffort: 'medium',
+  }
+
 
   constructor() {
+    const history = localStorage.getItem("chatHistory")
+
+    if (history) {
+      try {
+        const chatHistory = JSON.parse(history)
+        if (chatHistory.length > 0) {
+          this.chats = chatHistory
+        }
+      } catch {
+        // 数据损坏，保留默认数据，不让整个 app 崩溃
+      }
+    }
+
     makeAutoObservable(this)
+    autorun(() => {
+      localStorage.setItem('chatHistory', JSON.stringify(this.chats))
+    })
   }
+
 
   createNewChat(modelName: string = 'deepseek-v4-flash') {
     const chatItem = {
@@ -128,6 +157,7 @@ Would you like to dive deeper into any specific aspect, such as the Transformer 
       messages: [],
     }
     this.chats.push(chatItem)
+    // localStorage.setItem('chatHistory', JSON.stringify(this.chats))
     return {
       modelName: chatItem.model,
       chatId: chatItem.chatId
@@ -142,7 +172,17 @@ Would you like to dive deeper into any specific aspect, such as the Transformer 
     const currentChat = this.chats[idx]
     currentChat.messages.push(...msgs)
     currentChat.lastModified = new Date().toISOString()
+    // localStorage.setItem('chatHistory', JSON.stringify(this.chats))
 
+  }
+
+  deleteChat(chatId: string) {
+    const idx = this.chats.findIndex(chat => chat.chatId == chatId)
+    if (idx == -1) {
+      return
+    }
+    this.chats.splice(idx, 1)
+    // localStorage.setItem('chatHistory', JSON.stringify(this.chats))
   }
 
 

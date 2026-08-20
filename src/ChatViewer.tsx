@@ -63,7 +63,7 @@ function ChatContentComponent({ idx }: { idx: number }) {
       <div className="px-5 py-4 flex grow-0 border-b-amber-100 border-b  justify-between items-center">
         <div className="flex flex-col items-start">
           <h2>
-            {currentChat.title}
+            {currentChat.title || 'New Conversation'}
           </h2>
           <div className="text-sm">
             {currentChat.messages.length} messages
@@ -87,7 +87,7 @@ function ChatContentComponent({ idx }: { idx: number }) {
         {
           currentChat.messages.map((msg, idx) => {
             return (
-              <div className={`flex border-2 px-3 py-2 rounded-md max-w-2/3 w-fit [&.user]:self-end ${msg.role}`} key={idx}>
+              <div className={`flex border-2 px-3 py-2 rounded-md max-w-3/4 w-fit [&.user]:self-end ${msg.role}`} key={idx}>
                 <div className="whitespace-pre-wrap text-start">
                   {msg.content}
                 </div>
@@ -98,8 +98,9 @@ function ChatContentComponent({ idx }: { idx: number }) {
 
       </div>
       <div className="px-5 pt-2  pb-5 border-t relative">
-        <textarea className="w-full py-2 pl-2 outline-none pr-[90px] resize-none border rounded-xl"
+        <textarea className="w-full py-2 focus:border-blue-500 pl-2 outline-none pr-[90px] resize-none border rounded-xl"
           value={textInput.value}
+          placeholder="Write a message ..."
           onChange={textInput.onChange}
           onKeyUp={handleKeyDown} />
         <button className="absolute right-12 top-6 rounded z-10 text-blue-600 border p-1 text-xl h-fit"
