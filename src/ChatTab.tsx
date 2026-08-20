@@ -15,7 +15,9 @@ function ChatTab({ chatId }: { chatId: string }) {
   dayjs.extend(relativeTime)
 
 
-  const deleteChat = useCallback(() => {
+  const deleteChat = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    // e.stopPropagation()
+    e.preventDefault()
     conversations.deleteChat(chatId)
     navigate('/')
   }, [])
@@ -37,7 +39,7 @@ function ChatTab({ chatId }: { chatId: string }) {
             <span>{currentChat.model}</span>
             <span>
               {
-                dayjs(currentChat.lastModified).fromNow(true)
+                dayjs(currentChat.lastModified).fromNow(true) + ' ago'
               }
             </span>
           </div>

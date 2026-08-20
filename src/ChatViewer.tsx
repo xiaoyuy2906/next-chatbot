@@ -4,7 +4,7 @@ import { CheckCircleFilled, EditFilled, ReloadOutlined, SendOutlined } from '@an
 import { useCallback, useEffect, useRef, useState } from "react"
 import type { Message } from "./types.ts"
 import { observer } from "mobx-react"
-import { Button, Empty } from 'antd'
+import EmptyComp from "./EmptyComp.tsx"
 
 function useInput(init: string = '') {
   const [value, setValue] = useState(init)
@@ -18,12 +18,7 @@ function useInput(init: string = '') {
   return { value, onChange, clearInput }
 }
 
-const EmptyComp: React.FC = () => (
-  <Empty
-    description={false}>
-    <Button type="primary">Create New Chat Now</Button>
-  </Empty>
-)
+
 
 function ChatContentComponent({ idx }: { idx: number }) {
   const params = useParams()
@@ -119,19 +114,10 @@ const ChatContent = observer(ChatContentComponent)
 function ChatViewer() {
   const params = useParams()
   const idx = conversations.chats.findIndex(chat => chat.chatId == params.chatId)
-  const navigate = useNavigate()
-  const createNewChat = useCallback(() => {
-    const { modelName, chatId } = conversations.createNewChat()
-    navigate(`/models/${modelName}/chats/${chatId}`)
-  }, [])
-
-
 
   if (idx == -1) {
     return (
-      <div className="flex flex-col h-full justify-center grow" onClick={createNewChat}>
-        <EmptyComp />
-      </div>
+      <EmptyComp />
     )
   }
 

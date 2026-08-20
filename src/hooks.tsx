@@ -1,14 +1,21 @@
-import { useCallback, useState } from 'react'
+import { conversations } from "./store"
+import type { Config } from "./types"
 
 
-function useInput(init: string | number) {
-  const [value, setValue] = useState(() => init)
-  const onChange = useCallback((e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement, HTMLSelectElement>) => {
-    setValue(e.target.value)
-  }, [])
 
-  return { value, onChange }
+function useConfigInput<K extends keyof Config>(key: K) {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const raw = e.target.value
+    const current = conversations.config[key]
+    const value = (typeof current === 'number' ? Number(raw) : raw) as Config[K]
+    conversations.updateConfig(key, value)
+  }
+
+  return { value: conversations.config[key], onChange }
 }
 
 
-export { useInput }
+
+
+
+export { useConfigInput }

@@ -1,19 +1,18 @@
 import { NavLink } from "react-router"
-import { useInput } from "./hooks"
-import { conversations } from "./store.tsx"
-import { useEffect } from "react"
+import { useConfigInput } from "./hooks"
+import { observer } from "mobx-react"
 
 
 function Settings() {
-  const { config } = conversations
-  const apiBase = useInput(config.apiBase)
-  const apiKey = useInput(config.apiKey)
-  const temperature = useInput(config.temperature)
-  const topP = useInput(config.topP)
-  const frequencyPenalty = useInput(config.frequencyPenalty)
-  const maxCompletionTokens = useInput(config.maxCompletionTokens)
-  const reasoningEffort = useInput(config.reasoningEffort)
-  const defaultModel = useInput(config.defaultModel)
+  const apiBase = useConfigInput('apiBase')
+  const apiKey = useConfigInput('apiKey')
+  const temperature = useConfigInput('temperature')
+  const topP = useConfigInput('topP')
+  const frequencyPenalty = useConfigInput('frequencyPenalty')
+  const maxCompletionTokens = useConfigInput('maxCompletionTokens')
+  const reasoningEffort = useConfigInput('reasoningEffort')
+  const defaultModel = useConfigInput('defaultModel')
+
 
 
 
@@ -180,4 +179,4 @@ function Settings() {
   )
 }
 
-export default Settings
+export default observer(Settings)

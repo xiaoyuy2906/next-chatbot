@@ -1,7 +1,7 @@
 import { makeAutoObservable, autorun } from "mobx"
-import { type Chat, type Message } from "./types.ts"
+import { type Chat, type Message, type Config } from "./types.ts"
 import axios from "axios"
-import { defaultTheme } from "antd/es/theme/context"
+
 
 
 
@@ -115,7 +115,7 @@ Would you like to dive deeper into any specific aspect, such as the Transformer 
     }
   ]
 
-  config = {
+  config: Config = {
     apiBase: 'https://ai-gateway.vercel.sh',
     defaultModel: 'deepseek-v4-flash',
     apiKey: '',
@@ -148,7 +148,12 @@ Would you like to dive deeper into any specific aspect, such as the Transformer 
   }
 
 
-  createNewChat(modelName: string = 'deepseek-v4-flash') {
+  updateConfig<K extends keyof Config>(key: K, value: Config[K]) {
+    this.config[key] = value
+    console.log(this.config)
+  }
+
+  createNewChat(modelName: string = this.config.defaultModel as string) {
     const chatItem = {
       chatId: Math.random().toString(36).slice(2),
       model: modelName,
@@ -196,6 +201,7 @@ Would you like to dive deeper into any specific aspect, such as the Transformer 
       chatId: currentChat.chatId,
       model: currentChat.model,
       messages: currentChat.messages,
+      ...this.config
     })
     console.log(data)
     this.addMessage(chatId, {
