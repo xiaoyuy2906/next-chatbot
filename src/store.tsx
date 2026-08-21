@@ -119,7 +119,7 @@ Would you like to dive deeper into any specific aspect, such as the Transformer 
     apiBase: 'https://ai-gateway.vercel.sh',
     defaultModel: 'deepseek-v4-flash',
     apiKey: '',
-    temperature: 2,
+    temperature: 1,
     topP: 1,
     frequencyPenalty: 2,
     maxCompletionTokens: 96000,
@@ -129,12 +129,16 @@ Would you like to dive deeper into any specific aspect, such as the Transformer 
 
   constructor() {
     const history = localStorage.getItem("chatHistory")
+    const config = localStorage.getItem('chatConfig')
 
-    if (history) {
+
+    if (history && config) {
       try {
         const chatHistory = JSON.parse(history)
+        const chatConfig = JSON.parse(config)
         if (chatHistory.length > 0) {
           this.chats = chatHistory
+          this.config = chatConfig
         }
       } catch {
         // 数据损坏，保留默认数据，不让整个 app 崩溃
@@ -144,13 +148,13 @@ Would you like to dive deeper into any specific aspect, such as the Transformer 
     makeAutoObservable(this)
     autorun(() => {
       localStorage.setItem('chatHistory', JSON.stringify(this.chats))
+      localStorage.setItem('chatConfig', JSON.stringify(this.config))
     })
   }
 
 
   updateConfig<K extends keyof Config>(key: K, value: Config[K]) {
     this.config[key] = value
-    console.log(this.config)
   }
 
   createNewChat(modelName: string = this.config.defaultModel as string) {

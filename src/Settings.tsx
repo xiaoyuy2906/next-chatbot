@@ -118,7 +118,7 @@ function Settings() {
               Temperature
               <div className="flex  px-2.5 py-1.5 border rounded-lg w-50 justify-between text-xs items-center">
                 <span>{temperature.value}</span>
-                <input type="range" max="2" min="0" step="0.1" {...temperature} />
+                <input type="range" max="1" min="0" step="0.1" {...temperature} />
               </div>
             </div>
           </div>
@@ -138,7 +138,7 @@ function Settings() {
               Frequency Penalty
               <div className="flex  px-2.5 py-1.5 border rounded-lg w-50 justify-between text-xs items-center">
                 <span>{frequencyPenalty.value}</span>
-                <input type="range" max="2" min="0" step="0.1" {...frequencyPenalty} />
+                <input type="range" max="2" min="-2" step="0.1" {...frequencyPenalty} />
               </div>
             </div>
           </div>
